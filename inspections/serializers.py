@@ -20,6 +20,8 @@ class ReviewDecisionSerializer(serializers.ModelSerializer):
         fields = ["id", "inspection", "reviewer", "decision", "notes", "created_at"]
 
 
+from django.utils import timezone
+
 class InspectionSerializer(serializers.ModelSerializer):
     evidences = EvidenceSerializer(many=True, read_only=True)
     risk_result = RiskResultSerializer(read_only=True)
@@ -41,3 +43,13 @@ class InspectionSerializer(serializers.ModelSerializer):
             "risk_result",
             "decisions",
         ]
+
+    def validate_batch_number(self, value):
+        if not value:
+            raise serializers.ValidationError("Batch number is required.")
+        return value
+
+    def validate_received_at(self, value):
+        if value > timezone.now():
+            raise serializers.ValidationError("Received date cannot be in the future.")
+        return value

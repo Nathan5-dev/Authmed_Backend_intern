@@ -9,9 +9,10 @@ from .serializers import (
     ReviewDecisionSerializer,
 )
 from authmed_intern.permissions import IsOrgMember
+from authmed_intern.mixins import TenantFilterMixin
 
 
-class InspectionViewSet(viewsets.ModelViewSet):
+class InspectionViewSet(TenantFilterMixin, viewsets.ModelViewSet):
     queryset = BatchInspection.objects.all()
     serializer_class = InspectionSerializer
     permission_classes = [permissions.IsAuthenticated, IsOrgMember]
@@ -26,19 +27,19 @@ class InspectionViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EvidenceViewSet(viewsets.ModelViewSet):
+class EvidenceViewSet(TenantFilterMixin, viewsets.ModelViewSet):
     queryset = Evidence.objects.all()
     serializer_class = EvidenceSerializer
     permission_classes = [permissions.IsAuthenticated, IsOrgMember]
 
 
-class RiskResultViewSet(viewsets.ModelViewSet):
+class RiskResultViewSet(TenantFilterMixin, viewsets.ModelViewSet):
     queryset = RiskResult.objects.all()
     serializer_class = RiskResultSerializer
     permission_classes = [permissions.IsAuthenticated, IsOrgMember]
 
 
-class ReviewDecisionViewSet(viewsets.ModelViewSet):
+class ReviewDecisionViewSet(TenantFilterMixin, viewsets.ModelViewSet):
     queryset = ReviewDecision.objects.all()
     serializer_class = ReviewDecisionSerializer
     permission_classes = [permissions.IsAuthenticated, IsOrgMember]

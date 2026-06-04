@@ -18,3 +18,12 @@ class IsOrgMember(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated
+
+
+class IsAdmin(permissions.BasePermission):
+    """Allow access only to users with the 'admin' role or superusers."""
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and (
+            request.user.is_superuser or request.user.role == "admin"
+        )

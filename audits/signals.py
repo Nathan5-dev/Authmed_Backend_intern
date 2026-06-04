@@ -22,7 +22,14 @@ def model_saved(sender, instance, created, **kwargs):
     if not _audit_table_exists():
         return
     try:
+        # Try to get organization from the instance
+        org = getattr(instance, "organization", None)
+        if org is None and hasattr(instance, "inspection"):
+             # For nested objects like Evidence, RiskResult, etc.
+             org = getattr(instance.inspection, "organization", None)
+
         AuditLog.objects.create(
+            organization=org,
             actor=getattr(instance, "inspector", None) and getattr(instance.inspector, "username", "") or "",
             action=("created" if created else "updated"),
             object_type=sender.__name__,
@@ -41,7 +48,12 @@ def model_deleted(sender, instance, **kwargs):
     if not _audit_table_exists():
         return
     try:
+        org = getattr(instance, "organization", None)
+        if org is None and hasattr(instance, "inspection"):
+             org = getattr(instance.inspection, "organization", None)
+
         AuditLog.objects.create(
+            organization=org,
             actor="",
             action="deleted",
             object_type=sender.__name__,
