@@ -27,7 +27,13 @@ class BatchInspection(models.Model):
     
     def match_references(self, text):
         """
-        Attempt to match text from OCR to a Product or Supplier within the same organization.
+        Automatic matching engine triggered by OCR text extraction.
+        
+        Searches for ProductReference by SKU (case-insensitive) or Name,
+        and Supplier by Name, strictly restricted to the same organization.
+        
+        Args:
+            text (str): The alphanumeric string extracted from a scan or manual note.
         """
         from products.models import ProductReference
         from suppliers.models import Supplier

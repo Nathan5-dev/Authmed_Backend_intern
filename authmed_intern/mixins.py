@@ -2,8 +2,8 @@ from rest_framework import permissions
 
 class TenantFilterMixin:
     """
-    Mixin to automatically filter viewset querysets by the user's organization.
-    Ensures that users only see data belonging to their own organization.
+    Mixin to automatically filter querysets based on the user's organization.
+    Ensures data isolation in a multi-tenant environment.
     """
     def get_queryset(self):
         user = self.request.user
