@@ -13,6 +13,18 @@ class RiskResultSerializer(serializers.ModelSerializer):
         model = RiskResult
         fields = ["id", "inspection", "risk_score", "reason", "created_at"]
 
+    def validate_risk_score(self, value):
+        if value < 0 or value > 100:
+            raise serializers.ValidationError("Risk score must be between 0 and 100.")
+        return value
+
+    def validate(self, data):
+        score = data.get("risk_score")
+        reason = data.get("reason", "")
+        if score > 50 and not reason:
+            raise serializers.ValidationError({"reason": "A reason is mandatory for risk scores above 50."})
+        return data
+
 
 class ReviewDecisionSerializer(serializers.ModelSerializer):
     class Meta:

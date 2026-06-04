@@ -24,6 +24,36 @@ class BatchInspection(models.Model):
     )
 
     outcome = models.CharField(max_length=32, choices=OUTCOME_CHOICES, null=True, blank=True)  # Final outcome from reviewer
+    
+    def match_references(self, text):
+        """
+        Attempt to match text from OCR to a Product or Supplier within the same organization.
+        """
+        from products.models import ProductReference
+        from suppliers.models import Supplier
+        
+        # Match Product by SKU or Name
+        product = ProductReference.objects.filter(
+            organization=self.organization, 
+            sku__iexact=text
+        ).first() or ProductReference.objects.filter(
+            organization=self.organization, 
+            name__icontains=text
+        ).first()
+        
+        if product and not self.product:
+            self.product = product
+            
+        # Match Supplier by Name
+        supplier = Supplier.objects.filter(
+            organization=self.organization, 
+            name__icontains=text
+        ).first()
+        
+        if supplier and not self.supplier:
+            self.supplier = supplier
+            
+        self.save()
 
     def __str__(self):
         return f"BatchInspection {self.id} - {self.product or 'Unknown'}"
