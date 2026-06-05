@@ -1,5 +1,9 @@
+from rest_framework import permissions, viewsets
+
 from authmed_intern.permissions import IsAdmin
 from authmed_intern.mixins import TenantFilterMixin
+from users.models import User
+from users.serializers import UserSerializer
 
 
 class UserViewSet(TenantFilterMixin, viewsets.ModelViewSet):
